@@ -70,12 +70,23 @@ class Network:
         pass
 
 class Data:
-    def __init__(self, data_keys, value):
+    def __init__(self, value, data_keys):
         self.key = self.__setKey(data_keys)
         self.value = value
 
     def __setKey(self, data_keys):
-        return 0
+        # inja lock mishe
+        new_key = random.randint(1, 5000)
+        i = 0
+        while i < len(data_keys):
+            if new_key == data_keys[i]:
+                new_key = random.randint(1, 5000)
+                i = 0
+            else:
+                i+=1
+        data_keys.append(new_key)
+        # lock ta inja
+        return new_key
 
     def addData(self):
         pass
