@@ -59,11 +59,10 @@ class Network:
         # data hash montaghel mishe
         for data in self.nodes[agent_index].datas:
             self.nodes[(agent_index+1)%len(self.nodes)].datas.append(data)
-        
-        # az shabake hazf mishe
-        self.nodes.remove(agent)
 
         # ft ha update mishan
+        # az shabake hazf mishe
+        self.nodes.remove(agent)
         # lock ta inja
 
     def lookUp(self, key):
@@ -78,6 +77,12 @@ class Network:
                 break
             i+=1
         # lock ta inja
+    
+    def updateFTOnAdd(self, agent):
+        pass
+
+    def updateFTOnRemove(self, agent):
+        pass
 
 class Data:
     def __init__(self, value, data_keys):
