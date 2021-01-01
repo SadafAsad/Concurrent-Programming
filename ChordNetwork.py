@@ -45,6 +45,9 @@ class Network:
                 self.nodes[agent_index].successor.datas.remove(data)
 
         # ft ha update mishan
+        # bazam lock mikham?
+        self.updateFTOnAdd(agent)
+        # ??
         # lock ta inja
 
     def removeFromNetwork(self, agent):
@@ -61,8 +64,9 @@ class Network:
             self.nodes[(agent_index+1)%len(self.nodes)].datas.append(data)
 
         # ft ha update mishan
-        # az shabake hazf mishe
-        self.nodes.remove(agent)
+        # bazam lock mikham?
+        self.updateFTOnRemove(agent)
+        # ??
         # lock ta inja
 
     def lookUp(self, key):
@@ -79,10 +83,69 @@ class Network:
         # lock ta inja
     
     def updateFTOnAdd(self, agent):
-        pass
+        # inja lock mishe
+        agent_index = self.nodes.index(agent)
+        
+        # FT khodesh va 5ta agent ghablesh
+        agent_counter = 6
+        i = agent_index
+        while agent_counter > 0:
+            r = 0
+            while r < 5:
+                key = (self.nodes[i].id + 2**r)%self.nodes[-1].id
+                k = i
+                flag = False
+                while k < len(self.nodes):
+                    if key <= self.nodes[k].id:
+                        self.nodes[i].FT[r] = self.nodes[k]
+                        flag = True
+                        break
+                    k+=1
+                if not flag:
+                    k = 0
+                    while k < i:
+                        if key <= self.nodes[k].id:
+                            self.nodes[i].FT[r] = self.nodes[k]
+                            flag = True
+                            break
+                        k+=1
+                r+=1
+            i-=1
+            agent_counter-=1
+        # lock ta inja
 
     def updateFTOnRemove(self, agent):
-        pass
+        # inja lock mishe
+        agent_index = self.nodes.index(agent)
+        # remove agent from network
+        self.nodes.remove(agent)
+
+        agent_counter = 4
+        i = agent_index-1
+        while agent_counter > 0:
+            r = 0
+            while r < 5:
+                key = (self.nodes[i].id + 2**r)%self.nodes[-1].id
+                k = i
+                flag = False
+                while k < len(self.nodes):
+                    if key <= self.nodes[k].id:
+                        self.nodes[i].FT[r] = self.nodes[k]
+                        flag = True
+                        break
+                    k+=1
+                if not flag:
+                    k = 0
+                    while k < i:
+                        if key <= self.nodes[k].id:
+                            self.nodes[i].FT[r] = self.nodes[k]
+                            flag = True
+                            break
+                        k+=1
+                r+=1
+            i-=1
+            agent_counter-=1
+        # lock ta inja
 
 class Data:
     def __init__(self, value, data_keys):
