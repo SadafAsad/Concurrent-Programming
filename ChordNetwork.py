@@ -30,9 +30,9 @@ class Network:
 
         agent_index = self.nodes.index(agent)
         # successoresh ro moshakhas mikonm
-        self.nodes[agent_index].successor = self.nodes[(agent_index+1)%(len(self.nodes))]
+        self.nodes[agent_index].successor = self.nodes[(agent_index+1)%len(self.nodes)]
         # predecessore successoresh ro taghir midam
-        self.nodes[(agent_index+1)%(len(self.nodes))].predecessor = self.nodes[agent_index]
+        self.nodes[(agent_index+1)%len(self.nodes)].predecessor = self.nodes[agent_index]
         # predecessoresh ro moshakhas mikonm
         self.nodes[agent_index].predecessor = self.nodes[agent_index-1]
         # successore predecessoresh ro taghir midam
@@ -44,11 +44,27 @@ class Network:
                 self.nodes[agent_index].datas.append(data)
                 self.nodes[agent_index].successor.datas.remove(data)
 
-        # ft update beshe
+        # ft ha update mishan
         # lock ta inja
 
-    def removeFromNetwork(self, id):
-        pass
+    def removeFromNetwork(self, agent):
+        # inja lock mishe
+        agent_index = self.nodes.index(agent)
+        
+        # predecessore successoresh taghir mikone
+        self.nodes[(agent_index+1)%len(self.nodes)].predecessor = self.nodes[agent_index].predecessor
+        # successore predecessoresh taghir mikone
+        self.nodes[agent_index-1].successor = self.nodes[agent_index].successor
+
+        # data hash montaghel mishe
+        for data in self.nodes[agent_index].datas:
+            self.nodes[(agent_index+1)%len(self.nodes)].datas.append(data)
+        
+        # az shabake hazf mishe
+        self.nodes.remove(agent)
+
+        # ft ha update mishan
+        # lock ta inja
 
     def lookUp(self, key):
         pass
