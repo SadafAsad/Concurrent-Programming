@@ -69,6 +69,9 @@ class Network:
     def lookUp(self, key):
         pass
 
+    def addData(self, key):
+        pass
+
 class Data:
     def __init__(self, value, data_keys):
         self.key = self.__setKey(data_keys)
