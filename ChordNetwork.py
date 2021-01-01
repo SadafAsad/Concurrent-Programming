@@ -87,6 +87,3 @@ class Data:
         data_keys.append(new_key)
         # lock ta inja
         return new_key
-
-    def addData(self):
-        pass
