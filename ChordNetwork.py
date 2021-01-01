@@ -69,8 +69,15 @@ class Network:
     def lookUp(self, key):
         pass
 
-    def addData(self, key):
-        pass
+    def addData(self, data):
+        # inja lock mishe
+        i = 0
+        while i < len(self.nodes):
+            if self.nodes[i].id >= data.key:
+                self.nodes[i].datas.append(data)
+                break
+            i+=1
+        # lock ta inja
 
 class Data:
     def __init__(self, value, data_keys):
