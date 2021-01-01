@@ -69,8 +69,27 @@ class Network:
         # ??
         # lock ta inja
 
-    def lookUp(self, key):
-        pass
+    def lookUp(self, agent, key):
+        # inja lock mishe
+        agent_index = self.nodes.index(agent)
+        i = agent_index
+        r = 0
+        while r < 5:
+            if self.nodes[i].FT[r].id == key:
+                return self.nodes[i].FT[r]
+            elif self.nodes[i].FT[r].id < key:
+                if r != 4:
+                    i = self.nodes.index(self.nodes[i].FT[r])
+                    r = 0
+                else:
+                    r+=1
+            elif self.nodes[i].FT[r].id > key:
+                if r != 0:
+                    i = self.nodes.index(self.nodes[i].FT[r-1])
+                    r = 0
+                else:
+                    return self.nodes[i].FT[r]
+        # lock ta inja
 
     def addData(self, data):
         # inja lock mishe
