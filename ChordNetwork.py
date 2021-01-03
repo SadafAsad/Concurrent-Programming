@@ -1,4 +1,14 @@
 import random
+from threading import Lock, Condition
+
+class Monitor:
+    def __init__(self):
+        self.nLookups = 0
+        self.busy = False
+        self.OKtoAddRemove = Condition() #mesle write hast
+        self.OKtoLookup = Condition() #mesle read hast
+        self.OKtoAddData = Condition()
+        self.mutex = Lock()
 
 class Agent:
     def __init__(self):
@@ -12,7 +22,8 @@ class Network:
     def __init__(self):
         self.nodes = list()
     
-    def addToNetwork(self, agent):
+    def addToNetwork(self):
+        agent = Agent()
         # id random behesh midam
         new_id = random.randint(1, 5000)
         i = 0
@@ -81,7 +92,8 @@ class Network:
                 else:
                     return self.nodes[i].FT[r]
 
-    def addData(self, data):
+    def addData(self, value):
+        data = Data(value, self.nodes)
         i = 0
         while i < len(self.nodes):
             if self.nodes[i].id >= data.key:
@@ -151,18 +163,21 @@ class Network:
             agent_counter-=1
 
 class Data:
-    def __init__(self, value, data_keys):
-        self.key = self.__setKey(data_keys)
+    def __init__(self, value, network):
+        self.key = self.__setKey(network)
         self.value = value
 
-    def __setKey(self, data_keys):
+    def __setKey(self, network):
         new_key = random.randint(1, 5000)
         i = 0
-        while i < len(data_keys):
-            if new_key == data_keys[i]:
-                new_key = random.randint(1, 5000)
-                i = 0
-            else:
-                i+=1
-        data_keys.append(new_key)
+        while i < len(network):
+            r = 0
+            while r < len(network[i].datas):
+                if new_key == network[i].datas[r].key:
+                    new_key = random.randint(1, 5000)
+                    i = -1
+                    break
+                else:
+                    r+=1
+            i+=1
         return new_key
