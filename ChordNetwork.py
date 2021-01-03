@@ -12,17 +12,80 @@ class Monitor:
         self.mutex = Lock()
 
     def startAddRemove(self):
-        pass
+        self.OKtoAddRemove.acquire()
+        self.mutex.acquire()
+        while self.busy or self.nDatas > 0 or self.nLookups > 0:
+            self.mutex.release()
+            self.OKtoAddRemove.wait()
+            self.mutex.acquire()
+        self.busy = True
+        self.mutex.release()
+        self.OKtoAddRemove.release()
     def endAddRemove(self):
-        pass
+        self.OKtoAddRemove.acquire()
+        self.OKtoAddData.acquire()
+        self.OKtoLookup.acquire()
+        self.mutex.acquire()
+        self.busy = False
+        self.mutex.release()
+        self.OKtoAddRemove.notify()
+        self.OKtoAddRemove.release()
+        self.OKtoAddData.notify()
+        self.OKtoAddData.release()
+        self.OKtoLookup.notify()
+        self.OKtoLookup.release()
+
     def startLookup(self):
-        pass
+        self.OKtoLookup.acquire()
+        self.mutex.acquire()
+        while self.busy:
+            self.mutex.release()
+            self.OKtoLookup.wait()
+            self.mutex.acquire()
+        self.nLookups += 1
+        self.mutex.release()
+        self.OKtoLookup.notifyAll()
+        self.OKtoLookup.release()
     def endLookup(self):
-        pass
+        self.OKtoLookup.acquire()
+        self.mutex.acquire()
+        self.nLookups -= self.nLookups
+        if self.nLookups == 0:
+            self.OKtoAddData.acquire()
+            self.OKtoAddData.notify()
+            self.OKtoAddData.release()
+
+            self.OKtoAddRemove.acquire()
+            self.OKtoAddRemove.notify()
+            self.OKtoAddRemove.release()
+        self.mutex.release()
+        self.OKtoLookup.release()
+    
     def startAddData(self):
-        pass
+        self.OKtoAddData.acquire()
+        self.mutex.acquire()
+        while self.busy:
+            self.mutex.release()
+            self.OKtoAddData.wait()
+            self.mutex.acquire()
+        self.nDatas += 1
+        self.mutex.release()
+        self.OKtoAddData.notifyAll()
+        self.OKtoAddData.release()
     def endAddData(self):
-        pass
+        self.OKtoAddData.acquire()
+        self.mutex.acquire()
+        self.nDatas -= self.nDatas
+        if self.nDatas == 0:
+            self.OKtoLookup.acquire()
+            self.OKtoLookup.notify()
+            self.OKtoLookup.release()
+
+            self.OKtoAddRemove.acquire()
+            self.OKtoAddRemove.notify()
+            self.OKtoAddRemove.release()
+        self.mutex.release()
+        self.OKtoAddData.release()
 
 class Data:
     def __init__(self, value, network):
