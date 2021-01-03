@@ -13,7 +13,6 @@ class Network:
         self.nodes = list()
     
     def addToNetwork(self, agent):
-        # inja lock mishe
         # id random behesh midam
         new_id = random.randint(1, 5000)
         i = 0
@@ -45,13 +44,9 @@ class Network:
                 self.nodes[agent_index].successor.datas.remove(data)
 
         # ft ha update mishan
-        # bazam lock mikham?
         self.updateFTOnAdd(agent)
-        # ??
-        # lock ta inja
 
     def removeFromNetwork(self, agent):
-        # inja lock mishe
         agent_index = self.nodes.index(agent)
         
         # predecessore successoresh taghir mikone
@@ -64,13 +59,9 @@ class Network:
             self.nodes[(agent_index+1)%len(self.nodes)].datas.append(data)
 
         # ft ha update mishan
-        # bazam lock mikham?
         self.updateFTOnRemove(agent)
-        # ??
-        # lock ta inja
 
     def lookUp(self, agent, key):
-        # inja lock mishe
         agent_index = self.nodes.index(agent)
         i = agent_index
         r = 0
@@ -89,20 +80,16 @@ class Network:
                     r = 0
                 else:
                     return self.nodes[i].FT[r]
-        # lock ta inja
 
     def addData(self, data):
-        # inja lock mishe
         i = 0
         while i < len(self.nodes):
             if self.nodes[i].id >= data.key:
                 self.nodes[i].datas.append(data)
                 break
             i+=1
-        # lock ta inja
     
     def updateFTOnAdd(self, agent):
-        # inja lock mishe
         agent_index = self.nodes.index(agent)
         
         # FT khodesh va 5ta agent ghablesh
@@ -131,10 +118,8 @@ class Network:
                 r+=1
             i-=1
             agent_counter-=1
-        # lock ta inja
 
     def updateFTOnRemove(self, agent):
-        # inja lock mishe
         agent_index = self.nodes.index(agent)
         # remove agent from network
         self.nodes.remove(agent)
@@ -164,7 +149,6 @@ class Network:
                 r+=1
             i-=1
             agent_counter-=1
-        # lock ta inja
 
 class Data:
     def __init__(self, value, data_keys):
@@ -172,7 +156,6 @@ class Data:
         self.value = value
 
     def __setKey(self, data_keys):
-        # inja lock mishe
         new_key = random.randint(1, 5000)
         i = 0
         while i < len(data_keys):
@@ -182,5 +165,4 @@ class Data:
             else:
                 i+=1
         data_keys.append(new_key)
-        # lock ta inja
         return new_key
