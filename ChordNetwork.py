@@ -35,8 +35,10 @@ class Agent:
 class Network:
     def __init__(self):
         self.nodes = list()
+        self.monitor = Monitor()
     
     def addToNetwork(self):
+        self.monitor.startAddRemove()
         agent = Agent()
         # id random behesh midam
         new_id = random.randint(1, 5000)
@@ -69,9 +71,11 @@ class Network:
                 self.nodes[agent_index].successor.datas.remove(data)
 
         # ft ha update mishan
-        self.updateFTOnAdd(agent)
+        self.__updateFTOnAdd(agent)
+        self.monitor.endAddRemove()
 
     def removeFromNetwork(self, agent):
+        self.monitor.startAddRemove()
         agent_index = self.nodes.index(agent)
         
         # predecessore successoresh taghir mikone
@@ -84,9 +88,11 @@ class Network:
             self.nodes[(agent_index+1)%len(self.nodes)].datas.append(data)
 
         # ft ha update mishan
-        self.updateFTOnRemove(agent)
+        self.__updateFTOnRemove(agent)
+        self.monitor.endAddRemove()
 
     def lookUp(self, agent, key):
+        self.monitor.startLookup()
         agent_index = self.nodes.index(agent)
         i = agent_index
         r = 0
@@ -105,8 +111,10 @@ class Network:
                     r = 0
                 else:
                     return self.nodes[i].FT[r]
+        self.monitor.endLookup()
 
     def addData(self, value):
+        self.monitor.startAddData()
         data = Data(value, self.nodes)
         i = 0
         while i < len(self.nodes):
@@ -114,8 +122,9 @@ class Network:
                 self.nodes[i].datas.append(data)
                 break
             i+=1
+        self.monitor.endAddData()
     
-    def updateFTOnAdd(self, agent):
+    def __updateFTOnAdd(self, agent):
         agent_index = self.nodes.index(agent)
         
         # FT khodesh va 5ta agent ghablesh
@@ -145,7 +154,7 @@ class Network:
             i-=1
             agent_counter-=1
 
-    def updateFTOnRemove(self, agent):
+    def __updateFTOnRemove(self, agent):
         agent_index = self.nodes.index(agent)
         # remove agent from network
         self.nodes.remove(agent)
