@@ -24,6 +24,26 @@ class Monitor:
     def endAddData(self):
         pass
 
+class Data:
+    def __init__(self, value, network):
+        self.key = self.__setKey(network)
+        self.value = value
+
+    def __setKey(self, network):
+        new_key = random.randint(1, 5000)
+        i = 0
+        while i < len(network):
+            r = 0
+            while r < len(network[i].datas):
+                if new_key == network[i].datas[r].key:
+                    new_key = random.randint(1, 5000)
+                    i = -1
+                    break
+                else:
+                    r+=1
+            i+=1
+        return new_key
+
 class Agent:
     def __init__(self):
         self.id = None
@@ -184,23 +204,3 @@ class Network:
                 r+=1
             i-=1
             agent_counter-=1
-
-class Data:
-    def __init__(self, value, network):
-        self.key = self.__setKey(network)
-        self.value = value
-
-    def __setKey(self, network):
-        new_key = random.randint(1, 5000)
-        i = 0
-        while i < len(network):
-            r = 0
-            while r < len(network[i].datas):
-                if new_key == network[i].datas[r].key:
-                    new_key = random.randint(1, 5000)
-                    i = -1
-                    break
-                else:
-                    r+=1
-            i+=1
-        return new_key
