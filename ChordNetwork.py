@@ -4,6 +4,7 @@ from threading import Lock, Condition
 class Monitor:
     def __init__(self):
         self.nLookups = 0
+        self.nDatas = 0
         self.busy = False
         self.OKtoAddRemove = Condition() #mesle write hast
         self.OKtoLookup = Condition() #mesle read hast
