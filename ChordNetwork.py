@@ -11,6 +11,19 @@ class Monitor:
         self.OKtoAddData = Condition()
         self.mutex = Lock()
 
+    def startAddRemove(self):
+        pass
+    def endAddRemove(self):
+        pass
+    def startLookup(self):
+        pass
+    def endLookup(self):
+        pass
+    def startAddData(self):
+        pass
+    def endAddData(self):
+        pass
+
 class Agent:
     def __init__(self):
         self.id = None
