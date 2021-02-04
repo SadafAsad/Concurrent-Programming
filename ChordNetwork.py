@@ -1,5 +1,5 @@
 import random
-from threading import Lock, Condition
+from threading import Lock, Condition, Thread
 
 class Monitor:
     def __init__(self):
@@ -99,13 +99,13 @@ class Data:
         self.value = value
 
     def __setKey(self, network):
-        new_key = random.randint(1, 5000)
+        new_key = random.randint(1, 30)
         i = 0
         while i < len(network):
             r = 0
             while r < len(network[i].datas):
                 if new_key == network[i].datas[r].key:
-                    new_key = random.randint(1, 5000)
+                    new_key = random.randint(1, 30)
                     i = -1
                     break
                 else:
@@ -119,8 +119,8 @@ class Agent:
         self.id = None
         self.successor = None
         self.predecessor = None
-        self.datas = list()
-        self.FT = list()
+        self.datas = []
+        self.ft = []
 
 # har network az majmooei node tashkil shode ke hamoon agent hamoon hastan
 # va yek monitor dare baraye hamravandi
@@ -138,11 +138,11 @@ class Network:
         agent = Agent()
 
         # id random behesh midam
-        new_id = random.randint(1, 5000)
+        new_id = random.randint(1, 30)
         i = 0
         while i < len(self.nodes):
             if self.nodes[i].id == new_id:
-                new_id = random.randint(1, 5000)
+                new_id = random.randint(1, 30)
                 i = 0
             else:
                 i+=1
@@ -212,27 +212,27 @@ class Network:
         r = 0
         while r < 5:
             # agar node i vojood dashte bashe ke id ish ba key data yeki bashe, pas mishe hamoon node
-            if self.nodes[i].FT[r].id == key:
-                return self.nodes[i].FT[r]
+            if self.nodes[i].ft[r].id == key:
+                return self.nodes[i].ft[r]
             # agar ke id node koochik tar az key data bashe 2 halat vojood dare:
-            elif self.nodes[i].FT[r].id < key:
+            elif self.nodes[i].ft[r].id < key:
                 # agar ke in node akharin node tooye ft boode bashe, pas yani bayad berim tooye ft in begardim
                 if r == 4:
-                    i = self.nodes.index(self.nodes[i].FT[r])
+                    i = self.nodes.index(self.nodes[i].ft[r])
                     r = 0
                 # agar ke hanooz node dg ei tooye ft hast, pas mire baghiye ft ro check mikone
                 else:
                     r+=1
             # agar ke id node bozorg tar az key data bashe 2 halat vojood dare:
-            elif self.nodes[i].FT[r].id > key:
+            elif self.nodes[i].ft[r].id > key:
                 # agar ke avalin node tooye ft naboode, mirim node ghablish ke yani id ish koochi tar boode bar midarim va tooye ft oon migardim
                 # in hamoon halati hast ke migim doroste ft ro darim vali nemitoonim ghatei begim beyne 2ta node, node dg ei boode ya na, pas hatman tooye ft oon koochike mirim migardim
                 if r != 0:
-                    i = self.nodes.index(self.nodes[i].FT[r-1])
+                    i = self.nodes.index(self.nodes[i].ft[r-1])
                     r = 0
                 # inja dg e in avalin node tooye ft boode va id ish bozorg tar az key data hast, pas mishe hamin node
                 else:
-                    return self.nodes[i].FT[r]
+                    return self.nodes[i].ft[r]
 
         self.monitor.endLookup()
 
@@ -258,37 +258,27 @@ class Network:
     def __updateFTOnAdd(self, agent):
         # index agent jadid ke be shabake add shode aro migiram
         agent_index = self.nodes.index(agent)
-        
+
         # FT khodesh va 5ta agent ghablesh
         agent_counter = 6
 
         # andaze ft ro 5 gereftam va ba variable r control mikonm
         i = agent_index
-        while agent_counter > 0:
+        # abs(i) baraye moghei hast ke rooye dayere shabake dare harekat mikone va ba index manfi hast, check mikonm ke index esh nazane biroon
+        while agent_counter > 0 and abs(i)<len(self.nodes)+1:
+            self.nodes[i].ft = []
             r = 0
             while r < 5:
                 # in key hamoon chizi hast ke badan check mikonim bebinim che node i mitoone in key ro dashte bashe ...
                 key = (self.nodes[i].id + 2**r)%self.nodes[-1].id
-                k = i
-                # tooye 2ta tike check mishe ke key marboot be che agent i mishe az in agent be bad ta akhare agent haye shabakamoon va az avale shabake ta ghabl az in agent
-                # agar ke tooye agent be bad ta tahe shabake bashe flag true mishe va dg e tooye oon tike avalesh check nemikone
-                flag = False
-                # inja tooye hamoon tekke agent be bad ta akhare shabake check mikone
+                # az avale shabake check mikone bebine avalin node i ke key imoon koochi kar mosavi id ish hast kojast
+                k = 0
                 while k < len(self.nodes):
                     if key <= self.nodes[k].id:
-                        self.nodes[i].FT[r] = self.nodes[k]
-                        flag = True
+                        if k < len(self.nodes):
+                            self.nodes[i].ft.append(self.nodes[k])
                         break
                     k+=1
-                # inja ham hamoon tekke avale shabake ta ghabl az agent to check mikone
-                if not flag:
-                    k = 0
-                    while k < i:
-                        if key <= self.nodes[k].id:
-                            self.nodes[i].FT[r] = self.nodes[k]
-                            flag = True
-                            break
-                        k+=1
                 r+=1
             i-=1
             agent_counter-=1
@@ -306,28 +296,46 @@ class Network:
 
         # index avalin agent i ke ghablesh boode va bayad ft ish update beshe
         i = agent_index-1
-        while agent_counter > 0:
-            # andaze ft hamoon 5taei hast va ba variable r in ro control mikonm
+        # abs(i) baraye moghei hast ke rooye dayere shabake dare harekat mikone va ba index manfi hast, check mikonm ke index esh nazane biroon
+        while agent_counter > 0 and abs(i)<len(self.nodes)+1:
+            self.nodes[i].ft = []
             r = 0
-            # in tekke dg e mesle __updateFTOnAdd hast
             while r < 5:
+                # in key hamoon chizi hast ke badan check mikonim bebinim che node i mitoone in key ro dashte bashe ...
                 key = (self.nodes[i].id + 2**r)%self.nodes[-1].id
-                k = i
-                flag = False
+                # az avale shabake check mikone bebine avalin node i ke key imoon koochi kar mosavi id ish hast kojast
+                k = 0
                 while k < len(self.nodes):
                     if key <= self.nodes[k].id:
-                        self.nodes[i].FT[r] = self.nodes[k]
-                        flag = True
+                        if k < len(self.nodes):
+                            self.nodes[i].ft.append(self.nodes[k])
                         break
                     k+=1
-                if not flag:
-                    k = 0
-                    while k < i:
-                        if key <= self.nodes[k].id:
-                            self.nodes[i].FT[r] = self.nodes[k]
-                            flag = True
-                            break
-                        k+=1
                 r+=1
             i-=1
             agent_counter-=1
+
+
+if __name__ == '__main__':
+    network = Network()
+    agent_count = 10
+    add_list = list()
+    printLock = Lock()
+    for r in range(agent_count):
+        add_list.append(Thread(target=network.addToNetwork))
+    
+    for i in range(len(add_list)):
+        add_list[i].start()
+    for i in range(len(add_list)):
+        add_list[i].join()
+
+    for agent in network.nodes:
+        print("Agent: "+str(agent.id)+" Successor: "+str(agent.successor.id)+" Predecessor: "+str(agent.predecessor.id))
+        # print("Datas: ", end="")
+        # for data in agent.datas:
+        #     print("[k:"+str(data.key)+" v:"+str(data.value)+"] ", end="")
+        # print("\n")
+        print("FT: ", end="")
+        for node in agent.ft:
+            print(str(node.id)+" ", end="")
+        print("\n")
