@@ -227,15 +227,22 @@ class Network:
                     return self.nodes[i].FT[r]
         self.monitor.endLookup()
 
+    # baraye add kardan data be shabake hast
     def addData(self, value):
+        # vaghti darim data be shabake add mikonim hich kare dg ei nemitoone etefagh biufte
         self.monitor.startAddData()
+
+        # data jadid sakhte mishe
         data = Data(value, self.nodes)
+
+        # data ro be shabake ezaf mikonim
         i = 0
         while i < len(self.nodes):
             if self.nodes[i].id >= data.key:
                 self.nodes[i].datas.append(data)
                 break
             i+=1
+            
         self.monitor.endAddData()
     
     def __updateFTOnAdd(self, agent):
