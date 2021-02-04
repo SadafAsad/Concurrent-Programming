@@ -174,24 +174,33 @@ class Network:
         self.__updateFTOnRemove(agent)
         self.monitor.endAddRemove()
 
+    # id oon node i ke data ro dare return mikone
     def lookUp(self, agent, key):
         self.monitor.startLookup()
         agent_index = self.nodes.index(agent)
         i = agent_index
         r = 0
         while r < 5:
+            # agar node i vojood dashte bashe ke id ish ba key data yeki bashe, pas mishe hamoon node
             if self.nodes[i].FT[r].id == key:
                 return self.nodes[i].FT[r]
+            # agar ke id node koochik tar az key data bashe 2 halat vojood dare:
             elif self.nodes[i].FT[r].id < key:
+                # agar ke in node akharin node tooye ft boode bashe, pas yani bayad berim tooye ft in begardim
                 if r == 4:
                     i = self.nodes.index(self.nodes[i].FT[r])
                     r = 0
+                # agar ke hanooz node dg ei tooye ft hast, pas mire baghiye ft ro check mikone
                 else:
                     r+=1
+            # agar ke id node bozorg tar az key data bashe 2 halat vojood dare:
             elif self.nodes[i].FT[r].id > key:
+                # agar ke avalin node tooye ft naboode, mirim node ghablish ke yani id ish koochi tar boode bar midarim va tooye ft oon migardim
+                # in hamoon halati hast ke migim doroste ft ro darim vali nemitoonim ghatei begim beyne 2ta node, node dg ei boode ya na, pas hatman tooye ft oon koochike mirim migardim
                 if r != 0:
                     i = self.nodes.index(self.nodes[i].FT[r-1])
                     r = 0
+                # inja dg e in avalin node tooye ft boode va id ish bozorg tar az key data hast, pas mishe hamin node
                 else:
                     return self.nodes[i].FT[r]
         self.monitor.endLookup()
