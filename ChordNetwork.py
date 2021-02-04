@@ -11,6 +11,7 @@ class Monitor:
         self.OKtoAddData = Condition()
         self.mutex = Lock()
 
+    # vaghti add ya remove darim nabayad kare dg ei anjam beshe
     def startAddRemove(self):
         self.OKtoAddRemove.acquire()
         self.mutex.acquire()
@@ -35,6 +36,7 @@ class Monitor:
         self.OKtoLookup.notify()
         self.OKtoLookup.release()
 
+    # faghat lookup ha mitoonan hamzamn anjam beshan, baghiye kara nemitoonan anjam beshan
     def startLookup(self):
         self.OKtoLookup.acquire()
         self.mutex.acquire()
@@ -61,6 +63,7 @@ class Monitor:
         self.mutex.release()
         self.OKtoLookup.release()
     
+    # vaghti ke data ei mikhad add beshe, hich kare dg ei nemitoone anjam beshe
     def startAddData(self):
         self.OKtoAddData.acquire()
         self.mutex.acquire()
@@ -230,7 +233,7 @@ class Network:
                 # inja dg e in avalin node tooye ft boode va id ish bozorg tar az key data hast, pas mishe hamin node
                 else:
                     return self.nodes[i].FT[r]
-                    
+
         self.monitor.endLookup()
 
     # baraye add kardan data be shabake hast
