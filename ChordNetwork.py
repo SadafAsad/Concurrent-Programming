@@ -119,15 +119,21 @@ class Agent:
         self.datas = list()
         self.FT = list()
 
-
+# har network az majmooei node tashkil shode ke hamoon agent hamoon hastan
+# va yek monitor dare baraye hamravandi
 class Network:
     def __init__(self):
         self.nodes = list()
         self.monitor = Monitor()
     
+    # baraye add kardan agent jadid be shabake hast
     def addToNetwork(self):
+        # moghei ke darim agent add mikonim, hich kare dg ei (add,remove,lookup,...) nemitoonim anjam bedim
         self.monitor.startAddRemove()
+
+        # agent jadid ro misazim
         agent = Agent()
+
         # id random behesh midam
         new_id = random.randint(1, 5000)
         i = 0
@@ -138,11 +144,16 @@ class Network:
             else:
                 i+=1
         agent.id = new_id
+
         # be shabake ezaf mikonm
         self.nodes.append(agent)
+
+        # agent haye network ro sort mikonm
         self.nodes.sort(key=lambda agent: agent.id)
 
+        # index agent am ke sakhte shode va be network sort shode add shode ro migiram
         agent_index = self.nodes.index(agent)
+
         # successoresh ro moshakhas mikonm
         self.nodes[agent_index].successor = self.nodes[(agent_index+1)%len(self.nodes)]
         # predecessore successoresh ro taghir midam
@@ -160,10 +171,15 @@ class Network:
 
         # ft ha update mishan
         self.__updateFTOnAdd(agent)
+
         self.monitor.endAddRemove()
 
+    # baraye remove kardan agent az shabake hast
     def removeFromNetwork(self, agent):
+        # moghei ke darim remove mikonim hich kare dg ei (add,remove,lookup,...) nemitoone etefagh biufte
         self.monitor.startAddRemove()
+
+        # index agent i ke mikhaym remove konim ro az shabake peyda mikonim
         agent_index = self.nodes.index(agent)
         
         # predecessore successoresh taghir mikone
@@ -177,6 +193,7 @@ class Network:
 
         # ft ha update mishan
         self.__updateFTOnRemove(agent)
+        
         self.monitor.endAddRemove()
 
     # id oon node i ke data ro dare return mikone
