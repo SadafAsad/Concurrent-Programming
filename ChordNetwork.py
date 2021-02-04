@@ -318,24 +318,37 @@ class Network:
 
 if __name__ == '__main__':
     network = Network()
+
     agent_count = 10
-    add_list = list()
+    add_agent_list = list()
+
+    data_count = 30
+    add_data_list = list()
+
     printLock = Lock()
+
     for r in range(agent_count):
-        add_list.append(Thread(target=network.addToNetwork))
+        add_agent_list.append(Thread(target=network.addToNetwork))
     
-    for i in range(len(add_list)):
-        add_list[i].start()
-    for i in range(len(add_list)):
-        add_list[i].join()
+    for r in range(data_count):
+        add_data_list.append(Thread(target=network.addData, args=[random.randint(0,100)]))
+    
+    for i in range(len(add_agent_list)):
+        add_agent_list[i].start()
+    for i in range(len(add_data_list)):
+        add_data_list[i].start()
+
+    for i in range(len(add_agent_list)):
+        add_agent_list[i].join()
+    for i in range(len(add_data_list)):
+        add_data_list[i].join()
 
     for agent in network.nodes:
         print("Agent: "+str(agent.id)+" Successor: "+str(agent.successor.id)+" Predecessor: "+str(agent.predecessor.id))
-        # print("Datas: ", end="")
-        # for data in agent.datas:
-        #     print("[k:"+str(data.key)+" v:"+str(data.value)+"] ", end="")
-        # print("\n")
-        print("FT: ", end="")
+        print("Datas: ", end="")
+        for data in agent.datas:
+            print("[k:"+str(data.key)+" v:"+str(data.value)+"] ", end="")
+        print("\n"+"FT: ", end="")
         for node in agent.ft:
             print(str(node.id)+" ", end="")
         print("\n")
