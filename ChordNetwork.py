@@ -204,15 +204,21 @@ class Network:
         # vaghti ke lookup dare anjam mishe, faghat lookup ha mitoonan ba ham kar anjam bedan, baghiye kara (add,remove,addData) nemitoonan anjam beshan
         self.monitor.startLookup()
 
-        # index agent i ke mikhad dombale data begarde migirim
-        agent_index = self.nodes.index(agent)
-
+        # dombale agent i hastim ke id ish tooye variable voroodi dade behemoon
+        agent_index = 0
+        while agent_index < len(self.nodes):
+            if self.nodes[agent_index].id == agent:
+                break
+            else:
+                agent_index+=1
+        
         i = agent_index
         # andaze ft 5tast, ke ba variable r in ro control mikonim
         r = 0
         while r < 5:
             # agar node i vojood dashte bashe ke id ish ba key data yeki bashe, pas mishe hamoon node
             if self.nodes[i].ft[r].id == key:
+                print("Data key: "+str(key)+" in Agent: "+str(self.nodes[i].ft[r].id))
                 return self.nodes[i].ft[r]
             # agar ke id node koochik tar az key data bashe 2 halat vojood dare:
             elif self.nodes[i].ft[r].id < key:
@@ -232,8 +238,9 @@ class Network:
                     r = 0
                 # inja dg e in avalin node tooye ft boode va id ish bozorg tar az key data hast, pas mishe hamin node
                 else:
+                    print("Data key: "+str(key)+" in Agent: "+str(self.nodes[i].ft[r].id))
                     return self.nodes[i].ft[r]
-
+       
         self.monitor.endLookup()
 
     # baraye add kardan data be shabake hast
@@ -319,17 +326,19 @@ class Network:
 if __name__ == '__main__':
     network = Network()
 
-    agent_count = 10
+    print("How many agents do you want in your chord?")
+    agent_count = int(input())
     add_agent_list = list()
 
-    data_count = 30
+    print("How many datas do you want to add to your chord?")
+    print("***datas will be generated randomly***")
+    data_count = int(input())
     add_data_list = list()
 
     printLock = Lock()
 
     for r in range(agent_count):
         add_agent_list.append(Thread(target=network.addToNetwork))
-    
     for r in range(data_count):
         add_data_list.append(Thread(target=network.addData, args=[random.randint(0,100)]))
     
@@ -351,4 +360,28 @@ if __name__ == '__main__':
         print("\n"+"FT: ", end="")
         for node in agent.ft:
             print(str(node.id)+" ", end="")
-        print("\n")
+        print("\n--------------------------------------------------------------------------------------------------------------")
+
+    search_list = list()
+    print("Do you want to search a data? 1)yes 2)no")
+    print("***your agent id must be less than your data key***")
+    c = int(input())
+    while c == 1:
+        print("Enter agent id: ", end="")
+        agent_id = int(input())
+        print("Enter data key: ", end="")
+        data_key = int(input())
+        search_list.append(Thread(target=network.lookUp, args=[agent_id, data_key]))
+        print("Do you want to continue searching? 1)yes 2)no")
+        c = int(input())
+
+    for i in range(len(search_list)):
+        search_list[i].start()
+    for i in range(len(search_list)):
+        search_list[i].join()
+
+    
+    
+
+
+
