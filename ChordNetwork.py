@@ -191,7 +191,7 @@ class Network:
         for data in self.nodes[agent_index].datas:
             self.nodes[(agent_index+1)%len(self.nodes)].datas.append(data)
 
-        # ft ha update mishan
+        # ft ha update mishan va agent az shabake remove mishe
         self.__updateFTOnRemove(agent)
         
         self.monitor.endAddRemove()
@@ -284,15 +284,23 @@ class Network:
             i-=1
             agent_counter-=1
 
+    # vaghti ke agent i remove mishe bayad ft yek seri agent update beshe
     def __updateFTOnRemove(self, agent):
+        # index agent i ke mikhad remove beshe ro az shabake migirim
         agent_index = self.nodes.index(agent)
+
         # remove agent from network
         self.nodes.remove(agent)
 
+        # ft 5ta agent ghablesh bayad update beshe
         agent_counter = 4
+
+        # index avalin agent i ke ghablesh boode va bayad ft ish update beshe
         i = agent_index-1
         while agent_counter > 0:
+            # andaze ft hamoon 5taei hast va ba variable r in ro control mikonm
             r = 0
+            # in tekke dg e mesle __updateFTOnAdd hast
             while r < 5:
                 key = (self.nodes[i].id + 2**r)%self.nodes[-1].id
                 k = i
