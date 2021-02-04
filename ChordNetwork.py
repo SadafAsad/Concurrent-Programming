@@ -404,5 +404,3 @@ if __name__ == '__main__':
         remove_list[i].join()
     
     network.printChord()
-
-
