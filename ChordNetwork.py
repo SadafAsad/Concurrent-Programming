@@ -87,6 +87,9 @@ class Monitor:
         self.mutex.release()
         self.OKtoAddData.release()
 
+# data hamoon ye value daran va ye key
+# Data(5,network) --> data ei misaze ba value 5 va key ham khodesh khodkar adadi tooye range (1,5000) be soorate random mide behesh ke unique hast
+# network ro migire, ke bebine in data dare baraye che networki sakhte mishe ke key data haye tooye oon network unique beshan
 class Data:
     def __init__(self, value, network):
         self.key = self.__setKey(network)
@@ -107,6 +110,7 @@ class Data:
             i+=1
         return new_key
 
+# har agent 5ta field dare: id, successor, predecessor, datas, ft
 class Agent:
     def __init__(self):
         self.id = None
@@ -114,6 +118,7 @@ class Agent:
         self.predecessor = None
         self.datas = list()
         self.FT = list()
+
 
 class Network:
     def __init__(self):
