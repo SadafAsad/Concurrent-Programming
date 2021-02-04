@@ -182,8 +182,13 @@ class Network:
         # moghei ke darim remove mikonim hich kare dg ei (add,remove,lookup,addData) nemitoone etefagh biufte
         self.monitor.startAddRemove()
 
-        # index agent i ke mikhaym remove konim ro az shabake peyda mikonim
-        agent_index = self.nodes.index(agent)
+        # dombale agent i hastim ke id ish tooye variable voroodi dade behemoon
+        agent_index = 0
+        while agent_index < len(self.nodes):
+            if self.nodes[agent_index].id == agent:
+                break
+            else:
+                agent_index+=1
         
         # predecessore successoresh taghir mikone
         self.nodes[(agent_index+1)%len(self.nodes)].predecessor = self.nodes[agent_index].predecessor
@@ -195,7 +200,7 @@ class Network:
             self.nodes[(agent_index+1)%len(self.nodes)].datas.append(data)
 
         # ft ha update mishan va agent az shabake remove mishe
-        self.__updateFTOnRemove(agent)
+        self.__updateFTOnRemove(self.nodes[agent_index])
         
         self.monitor.endAddRemove()
 
@@ -322,6 +327,17 @@ class Network:
             i-=1
             agent_counter-=1
 
+    def printChord(self):
+        print("sadaf")
+        for agent in self.nodes:
+            print("Agent: "+str(agent.id)+" Successor: "+str(agent.successor.id)+" Predecessor: "+str(agent.predecessor.id))
+            print("Datas: ", end="")
+            for data in agent.datas:
+                print("[k:"+str(data.key)+" v:"+str(data.value)+"] ", end="")
+            print("\n"+"FT: ", end="")
+            for node in agent.ft:
+                print(str(node.id)+" ", end="")
+            print("\n--------------------------------------------------------------------------------------------------------------")
 
 if __name__ == '__main__':
     network = Network()
@@ -352,15 +368,7 @@ if __name__ == '__main__':
     for i in range(len(add_data_list)):
         add_data_list[i].join()
 
-    for agent in network.nodes:
-        print("Agent: "+str(agent.id)+" Successor: "+str(agent.successor.id)+" Predecessor: "+str(agent.predecessor.id))
-        print("Datas: ", end="")
-        for data in agent.datas:
-            print("[k:"+str(data.key)+" v:"+str(data.value)+"] ", end="")
-        print("\n"+"FT: ", end="")
-        for node in agent.ft:
-            print(str(node.id)+" ", end="")
-        print("\n--------------------------------------------------------------------------------------------------------------")
+    network.printChord()
 
     search_list = list()
     print("Do you want to search a data? 1)yes 2)no")
@@ -380,8 +388,21 @@ if __name__ == '__main__':
     for i in range(len(search_list)):
         search_list[i].join()
 
-    
-    
+    remove_list = list()
+    print("Do you want to remove an agent? 1)yes 2)no")
+    c= int(input())
+    while c == 1:
+        print("Enter agent id: ", end="")
+        agent_id = int(input())
+        remove_list.append(Thread(target=network.removeFromNetwork, args=[agent_id]))
+        print("Do you want to continue removing? 1)yes 2)no")
+        c = int(input())
 
+    for i in range(len(remove_list)):
+        remove_list[i].start()
+    for i in range(len(remove_list)):
+        remove_list[i].join()
+    
+    network.printChord()
 
 
