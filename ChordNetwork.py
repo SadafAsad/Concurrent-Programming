@@ -242,27 +242,36 @@ class Network:
                 self.nodes[i].datas.append(data)
                 break
             i+=1
-            
+
         self.monitor.endAddData()
     
+    # moghei ke agent jadidi be shabake add mishe, ft khodesh bayad sakhte beshe va ft yek seri agent dge ham bayad taghir kone
     def __updateFTOnAdd(self, agent):
+        # index agent jadid ke be shabake add shode aro migiram
         agent_index = self.nodes.index(agent)
         
         # FT khodesh va 5ta agent ghablesh
         agent_counter = 6
+
+        # andaze ft ro 5 gereftam va ba variable r control mikonm
         i = agent_index
         while agent_counter > 0:
             r = 0
             while r < 5:
+                # in key hamoon chizi hast ke badan check mikonim bebinim che node i mitoone in key ro dashte bashe ...
                 key = (self.nodes[i].id + 2**r)%self.nodes[-1].id
                 k = i
+                # tooye 2ta tike check mishe ke key marboot be che agent i mishe az in agent be bad ta akhare agent haye shabakamoon va az avale shabake ta ghabl az in agent
+                # agar ke tooye agent be bad ta tahe shabake bashe flag true mishe va dg e tooye oon tike avalesh check nemikone
                 flag = False
+                # inja tooye hamoon tekke agent be bad ta akhare shabake check mikone
                 while k < len(self.nodes):
                     if key <= self.nodes[k].id:
                         self.nodes[i].FT[r] = self.nodes[k]
                         flag = True
                         break
                     k+=1
+                # inja ham hamoon tekke avale shabake ta ghabl az agent to check mikone
                 if not flag:
                     k = 0
                     while k < i:
