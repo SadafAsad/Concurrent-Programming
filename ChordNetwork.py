@@ -183,7 +183,7 @@ class Network:
             if self.nodes[i].FT[r].id == key:
                 return self.nodes[i].FT[r]
             elif self.nodes[i].FT[r].id < key:
-                if r != 4:
+                if r == 4:
                     i = self.nodes.index(self.nodes[i].FT[r])
                     r = 0
                 else:
