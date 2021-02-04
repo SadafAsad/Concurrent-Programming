@@ -128,7 +128,7 @@ class Network:
     
     # baraye add kardan agent jadid be shabake hast
     def addToNetwork(self):
-        # moghei ke darim agent add mikonim, hich kare dg ei (add,remove,lookup,...) nemitoonim anjam bedim
+        # moghei ke darim agent add mikonim, hich kare dg ei (add,remove,lookup,addData) nemitoonim anjam bedim
         self.monitor.startAddRemove()
 
         # agent jadid ro misazim
@@ -176,7 +176,7 @@ class Network:
 
     # baraye remove kardan agent az shabake hast
     def removeFromNetwork(self, agent):
-        # moghei ke darim remove mikonim hich kare dg ei (add,remove,lookup,...) nemitoone etefagh biufte
+        # moghei ke darim remove mikonim hich kare dg ei (add,remove,lookup,addData) nemitoone etefagh biufte
         self.monitor.startAddRemove()
 
         # index agent i ke mikhaym remove konim ro az shabake peyda mikonim
@@ -198,9 +198,14 @@ class Network:
 
     # id oon node i ke data ro dare return mikone
     def lookUp(self, agent, key):
+        # vaghti ke lookup dare anjam mishe, faghat lookup ha mitoonan ba ham kar anjam bedan, baghiye kara (add,remove,addData) nemitoonan anjam beshan
         self.monitor.startLookup()
+
+        # index agent i ke mikhad dombale data begarde migirim
         agent_index = self.nodes.index(agent)
+
         i = agent_index
+        # andaze ft 5tast, ke ba variable r in ro control mikonim
         r = 0
         while r < 5:
             # agar node i vojood dashte bashe ke id ish ba key data yeki bashe, pas mishe hamoon node
@@ -225,6 +230,7 @@ class Network:
                 # inja dg e in avalin node tooye ft boode va id ish bozorg tar az key data hast, pas mishe hamin node
                 else:
                     return self.nodes[i].FT[r]
+                    
         self.monitor.endLookup()
 
     # baraye add kardan data be shabake hast
